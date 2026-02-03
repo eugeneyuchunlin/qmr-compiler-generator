@@ -24,5 +24,5 @@ Now let's use the `amaro` script to run on a simple circuit and the IBM 127 qubi
 We can follow the same build process with SCMR
 ```
 ./amaro compile problem-descriptions/scmr.qmrl
-./amaro run scmr demo/3_17_13.qasm demo/arch_scmr.json --amaro
+./amaro run scmr demo/3_17_13.qasm demo/arch_scmr.json --amaro > out.json
 ```
