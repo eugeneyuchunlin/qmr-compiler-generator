@@ -1,0 +1,26 @@
+RouteInfo:
+    routed_gates = CX
+    GateRealization{path : Vec<Location>}
+    realize_gate =  
+            map(|x| -> GateRealization{path = x}, 
+                all_paths(arch, vertical_neighbors(State.map[Gate.qubits[0]], Arch.width, Arch.height), 
+                multiple_horizontal_neighbors(Arch.outlets(), Arch.width), 
+                ((values(State.map())).extend(Arch.alg_qubits()))
+                .extend(fold(Vec(), |x, acc| -> acc.extend(x), 
+                map(|x| -> x.implementation.(path()), State.implemented_gates())))))
+ 
+
+TransitionInfo:
+    Transition{na : Location}
+    get_transitions = (Vec()).push(Transition{na=Location(0)})
+    apply = identity_application(step)
+    cost = 0.0
+
+
+ArchInfo:
+    Arch{alg_qubits : Vec<Location>, width : Int, height : Int, outlets: Vec<Location>}
+    get_locations = Arch.alg_qubits()
+    get_outlets = Arch.outlets()
+
+StateInfo:
+    cost = 1.0

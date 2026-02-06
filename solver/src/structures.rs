@@ -423,6 +423,7 @@ pub trait Transition<T: GateImplementation, A: Architecture> {
 
 pub trait Architecture {
     fn locations(&self) -> Vec<Location>;
+    fn outlets(&self) -> Vec<Location> { return Vec::new(); }
     fn graph(&self) -> (Graph<Location, ()>, HashMap<Location, NodeIndex>);
 }
 

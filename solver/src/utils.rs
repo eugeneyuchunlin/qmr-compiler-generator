@@ -316,6 +316,14 @@ pub fn vertical_neighbors(loc: Location, width: usize, height: usize) -> Vec<Loc
     return neighbors;
 }
 
+pub fn multiple_horizontal_neighbors(locs: Vec<Location>, width: usize) -> Vec<Location> {
+    let mut neighbors = Vec::new();
+    for loc in locs {
+        neighbors.extend(horizontal_neighbors(loc, width));
+    }
+    return neighbors; 
+}
+
 pub fn horizontal_neighbors(loc: Location, width: usize) -> Vec<Location> {
     let mut neighbors = Vec::new();
     if loc.get_index() % width > 0 {
@@ -417,8 +425,13 @@ pub fn all_paths<A: Architecture>(
 ) -> impl Iterator<Item = Vec<Location>> {
     let (mut graph, mut loc_to_node) = arch.graph();
     let max_length = graph.node_count();
-    for loc in blocked.iter() {
+    // println!("graph: {:?}", graph);
+    // println!("blocked: {:?}", blocked);
+    let unique_blocked: Vec<Location> = blocked.iter().cloned().unique().collect(); 
+    // println!("unique blocked: {:?}", unique_blocked);
+    for loc in unique_blocked.iter() {
         let old_last = graph[graph.node_indices().last().unwrap()];
+        // println!("removing node: {:?}", loc);
         graph.remove_node(loc_to_node[loc]);
         loc_to_node.insert(old_last, loc_to_node[loc]);
         loc_to_node.remove(loc);

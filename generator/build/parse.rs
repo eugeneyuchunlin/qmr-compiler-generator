@@ -108,7 +108,9 @@ fn gate_type_parser() -> impl Parser<char, Vec<ast::GateType>, Error = Simple<ch
     let gate_type = just("CX")
         .map(|_| ast::GateType::CX)
         .or(just("T").map(|_| ast::GateType::T))
-        .or(just("Pauli").map(|_| ast::GateType::Pauli));
+        .or(just("Pauli").map(|_| ast::GateType::Pauli))
+        .or(just("LOAD").map(|_| ast::GateType::LOAD))
+        .or(just("STORE").map(|_| ast::GateType::STORE));
     gate_type.separated_by(just(",").padded()).at_least(1)
 }
 
@@ -208,6 +210,13 @@ fn method_name() -> impl Parser<char, String, Error = Simple<char>> {
 
 fn arch_block_parser() -> impl Parser<char, Option<ast::ArchitectureBlock>, Error = Simple<char>> {
     let data = named_tuple_parser_new("Arch".to_string());
+    let get_outlets = just("get_outlets")
+        .padded()
+        .ignore_then(just("="))
+        .padded()
+        .ignore_then(expr_parser())
+        .padded();
+
     let get_locations = just("get_locations")
         .padded()
         .ignore_then(just("="))
@@ -222,9 +231,12 @@ fn arch_block_parser() -> impl Parser<char, Option<ast::ArchitectureBlock>, Erro
         .padded()
         .then(get_locations.or_not())
         .padded()
-        .map(|(data, get_locations)| ast::ArchitectureBlock {
+        .then(get_outlets.or_not())
+        .padded()
+        .map(|((data, get_locations), get_outlets)| ast::ArchitectureBlock {
             data,
             get_locations,
+            get_outlets,
         })
         .or_not()
 }

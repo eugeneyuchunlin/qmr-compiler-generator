@@ -10,6 +10,8 @@ pub enum GateType {
     CX,
     T,
     Pauli,
+    LOAD,
+    STORE
 }
 #[derive(Debug)]
 pub struct ImplBlock {
@@ -27,6 +29,7 @@ pub struct StepBlock {
 pub struct ArchitectureBlock {
     pub data: NamedTuple,
     pub get_locations: Option<Expr>,
+    pub get_outlets: Option<Expr>,
 }
 
 #[derive(Debug)]

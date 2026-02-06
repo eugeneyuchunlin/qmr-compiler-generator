@@ -160,6 +160,8 @@ fn emit_gate_type(g: &GateType) -> TokenStream {
         GateType::CX => quote! {"CX"},
         GateType::T => quote! {"T"},
         GateType::Pauli => quote! {"Pauli"},
+        GateType::LOAD => quote! {"LOAD"},
+        GateType::STORE => quote! {"STORE"},
     }
 }
 
@@ -204,7 +206,6 @@ fn emit_define_arch_struct(arch: &Option<ArchitectureBlock>) -> TokenStream {
                 graph: Graph<Location, ()>,
                 index_map: HashMap<Location, NodeIndex>,
                 #extra_fields_quote
-
             }
     }
 }
@@ -238,10 +239,11 @@ fn emit_impl_gate_methods(imp_data: &NamedTuple) -> TokenStream {
 
 fn emit_impl_arch(arch: &Option<ArchitectureBlock>) -> TokenStream {
     let arch_name = syn::Ident::new("CustomArch", Span::call_site());
-    let body = match arch {
+    let (location_body, outlets_body) = match arch {
         Some(ArchitectureBlock {
             data: d,
             get_locations: Some(expr),
+            get_outlets: Some(expr2)
         }) => {
             let get_locations = emit_expr(
                 expr,
@@ -250,25 +252,41 @@ fn emit_impl_arch(arch: &Option<ArchitectureBlock>) -> TokenStream {
                 &arch_name,
                 None,
             );
-            quote! {
-                return #get_locations;
-            }
+            
+            let get_outlets = emit_expr(
+                expr2,
+                &Context::DataTypeContext(DataType::Arch),
+                &arch_name,
+                &arch_name,
+                None,
+            );
+
+            ( quote! { return #get_locations } , quote! { return #get_outlets } )
         }
         _ => {
-            quote! {
+            (quote! {
                     let mut locations = Vec::new();
                     for node in self.graph.node_indices() {
                         locations.push(self.graph[node]);
                     }
                     return locations;
+            }, 
+            quote! {
+                    let mut locations = Vec::new();
+                    return locations;
             }
+            )
         }
     };
     return quote! {
 
     impl Architecture for #arch_name {
         fn locations(&self) -> Vec<Location>{
-            #body
+            #location_body
+        }
+
+        fn outlets(&self) -> Vec<Location> {
+            #outlets_body
         }
 
         fn graph(&self) -> (Graph<Location, ()>, HashMap<Location, NodeIndex>) {
