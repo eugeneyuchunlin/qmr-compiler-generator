@@ -317,11 +317,15 @@ Run with debug mode to see detailed error messages:
 If you use Amaro in your research, please cite:
 
 ```bibtex
-@article{molavi2024amaro,
+@article{molavi2026generating,
   title={Generating Compilers for Qubit Mapping and Routing},
   author={Molavi, Abtin and Xu, Amanda and Cecchetti, Ethan and Tannu, Swamit and Albarghouthi, Aws},
-  journal={arXiv preprint arXiv:2508.10781},
-  year={2024}
+  journal={Proceedings of the ACM on Programming Languages},
+  volume={10},
+  number={POPL},
+  pages={2265--2294},
+  year={2026},
+  publisher={ACM New York, NY, USA}
 }
 ```
 
