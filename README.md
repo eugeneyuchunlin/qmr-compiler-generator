@@ -72,7 +72,7 @@ The generated compiler appears in `generated-solvers/nisq/`.
 Where:
 - `<circuit.qasm>` : Quantum circuit in OpenQASM format
 - `<arch.json>` : Architecture connectivity graph in JSON
-- `--sabre` : Search algorithm (options: `--sabre`, `--onepass`, `--amaro`)
+- `--onepass` : Search algorithm (options: `--sabre`, `--onepass`, `--amaro`)
 
 **Debug a specification:**
 ```bash
